@@ -3,6 +3,7 @@ import joblib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import json
 
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
@@ -138,6 +139,8 @@ def main():
 
     # Save model
     os.makedirs("models", exist_ok=True)
+    with open("models/feature_columns.json", "w") as f:
+        json.dump(list(X.columns), f)
     joblib.dump(best_model, "models/churn_model.joblib")
     print("Saved: models/churn_model.joblib")
 
