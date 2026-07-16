@@ -1,56 +1,108 @@
-Results and Model Evaluation
+# Churn Probability
 
-We trained and evaluated two supervised machine learning models to predict customer churn using the Telco Customer Churn dataset: Logistic Regression and Random Forest.
+[![CI](https://github.com/shlokbhutani13/churn-probability/actions/workflows/ci.yml/badge.svg)](https://github.com/shlokbhutani13/churn-probability/actions/workflows/ci.yml)
 
-The dataset is class-imbalanced, which reflects a real-world churn prediction scenario where fewer customers leave compared to those who stay.
+I built this project to connect churn-model evaluation with a usable retention workflow. The Streamlit app estimates a customer's churn probability from five account details, and the repository includes the code that trains, evaluates, and tests the model behind it.
 
-Performance Summary
+The model favors recall. It flags more customers for review so a retention team misses fewer likely churners, while accepting more false positives.
 
-Logistic Regression
-Accuracy: 0.7381
-Precision: 0.5043
-Recall: 0.7834
-F1 Score: 0.6136
-ROC-AUC: 0.8413
+![Churn Probability Streamlit application](docs/assets/churn-app.png)
 
-Random Forest
-Accuracy: 0.7821
-Precision: 0.6159
-Recall: 0.4759
-F1 Score: 0.5370
-ROC-AUC: 0.8211
+## Holdout results
 
-Model Selection
+The checked-in model uses a stratified 80/20 split of the IBM Telco Customer Churn dataset.
 
-Although Random Forest achieved slightly higher accuracy, Logistic Regression was selected as the final model. This is because Logistic Regression achieved significantly higher recall, meaning it correctly identifies most customers who are likely to churn. In churn prediction, missing a churner is more costly than incorrectly flagging a loyal customer.
+| Metric | Result |
+| --- | ---: |
+| ROC-AUC | 0.832 |
+| Average precision | 0.627 |
+| Recall | 93.6% |
+| Precision | 41.1% |
+| F2 | 0.746 |
+| Decision threshold | 0.28 |
 
-Logistic Regression also achieved the highest ROC-AUC score, indicating better overall class separation. Additionally, it is more interpretable, making it suitable for real business decision-making.
+The threshold comes from out-of-fold training predictions and maximizes the F2 score. F2 gives recall more weight than precision. The holdout set remains separate until final evaluation.
 
-Outputs
+## Application
 
-The training pipeline generates and saves the following artifacts:
-Confusion matrix visualization
-ROC curve visualization
-Detailed classification metrics
-Trained model saved as a joblib file
+The app asks for:
 
-All outputs are stored in the reports and models directories.
+- tenure
+- monthly charges
+- contract type
+- internet service
+- payment method
 
-Key Takeaways
+It returns the estimated probability, a low/moderate/high risk band, and the model's decision at the saved threshold. The interface does not claim that any input caused the prediction.
 
-This project demonstrates a full end-to-end machine learning workflow, including data preprocessing, feature engineering, model training, evaluation, and selection. It highlights the importance of choosing evaluation metrics based on business goals rather than relying solely on accuracy.
+Run it locally with Python 3.11 or newer:
 
-Tech Stack
+```bash
+git clone https://github.com/shlokbhutani13/churn-probability.git
+cd churn-probability
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+streamlit run app.py
+```
 
-Python
-Pandas and NumPy
-Scikit-learn
-Matplotlib and Seaborn
-Joblib
+## Training
 
-Future Improvements
+```bash
+python -m src.train
+```
 
-Handle class imbalance using class-weighted training
-Perform feature importance analysis
-Tune decision thresholds based on business cost
-Deploy the model as an API or web application
+Training performs five-fold cross-validation over logistic-regression strength, selects an F2 threshold from out-of-fold predictions, and evaluates the fitted pipeline on the holdout split.
+
+The command writes:
+
+- `models/churn_model.joblib`
+- `models/model_metadata.json`
+- `reports/metrics.json`
+- confusion-matrix, ROC, and precision-recall charts
+
+The application and command-line predictor load the same model and metadata.
+
+## Command-line prediction
+
+```bash
+python -m src.predict \
+  --tenure 12 \
+  --monthly-charges 70 \
+  --contract "Month-to-month" \
+  --internet-service "Fiber optic" \
+  --payment-method "Electronic check"
+```
+
+## Verification
+
+```bash
+ruff check .
+pytest
+```
+
+The tests cover data validation, threshold selection, metrics, artifact generation, prediction inputs, model loading, and a complete Streamlit interaction.
+
+## Structure
+
+```text
+app.py                 Streamlit interface
+src/data.py            feature and target validation
+src/modeling.py        training, threshold selection, metrics, and charts
+src/prediction.py      shared artifact loading and prediction
+tests/                 unit, integration, and Streamlit tests
+models/                checked-in deployable artifacts
+reports/               holdout metrics and evaluation plots
+```
+
+## Limits
+
+This is an educational model trained on a public sample dataset. A production churn system would need current company data, probability calibration, drift monitoring, fairness review, intervention-cost modeling, and outcome measurement.
+
+## Dataset
+
+The repository includes the IBM Telco Customer Churn sample used in IBM's archived [customer churn prediction project](https://github.com/IBM/customer-churn-prediction). See [data/README.md](data/README.md) for the selected fields.
+
+## License
+
+[MIT](LICENSE). The dataset retains its original terms and attribution.

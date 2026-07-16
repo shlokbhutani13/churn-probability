@@ -1,0 +1,26 @@
+{
+  "artifact_version": 1,
+  "cross_validation_roc_auc": 0.837515,
+  "feature_order": [
+    "tenure",
+    "MonthlyCharges",
+    "Contract",
+    "InternetService",
+    "PaymentMethod"
+  ],
+  "holdout_rows": 1409,
+  "metrics": {
+    "accuracy": 0.627395,
+    "average_precision": 0.627188,
+    "f1": 0.571429,
+    "f2": 0.745633,
+    "precision": 0.411281,
+    "recall": 0.935829,
+    "roc_auc": 0.831937
+  },
+  "model_type": "class-weighted logistic regression",
+  "random_state": 42,
+  "selected_c": 10.0,
+  "threshold": 0.28,
+  "training_rows": 5634
+}

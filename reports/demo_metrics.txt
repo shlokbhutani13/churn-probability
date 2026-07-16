@@ -1,9 +1,0 @@
-Demo model (5 features)\nFeatures: tenure, MonthlyCharges, Contract, InternetService, PaymentMethod\n\n              precision    recall  f1-score   support
-
-           0     0.9072    0.7082    0.7954      1035
-           1     0.4975    0.7995    0.6133       374
-
-    accuracy                         0.7324      1409
-   macro avg     0.7023    0.7538    0.7044      1409
-weighted avg     0.7984    0.7324    0.7471      1409
-\nROC-AUC: 0.8319\n
