@@ -4,6 +4,11 @@
 
 I built this project to connect churn-model evaluation with a usable retention workflow. The Streamlit app estimates a customer's churn probability from five account details, and the repository includes the code that trains, evaluates, and tests the model behind it.
 
+## See it in action
+
+- [Open the live Streamlit demo](https://churn-probability-opcp7lvnjqqwejyoo77drm.streamlit.app/)
+- [Project overview in my portfolio](https://shlokbhutani13.github.io/)
+
 The model favors recall. It flags more customers for review so a retention team misses fewer likely churners, while accepting more false positives.
 
 ![Churn Probability Streamlit application](docs/assets/churn-app.png)
